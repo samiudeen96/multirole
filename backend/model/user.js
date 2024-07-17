@@ -1,13 +1,13 @@
 const db = require('../config/db');
 
 const user = {
-    create: (username, password, role_id, callback) => {
-        const query = 'INSERT INTO users (username, password, role_id) VALUES (?, ?, ?)';
-        db.query(query, [username, password, role_id], callback);
+    create: (name, email, password, role_id, callback) => {
+        const query = 'INSERT INTO users (name, email, password, role_id) VALUES (?, ?, ?, ?)';
+        db.query(query, [name, email, password, role_id], callback);
     },
-    findByUsername: (username, callback) => {
-        const query = 'SELECT * FROM users WHERE username = ?';
-        db.query(query, [username], callback);
+    findByEmail: (email, callback) => {
+        const query = 'SELECT * FROM users WHERE email = ?';
+        db.query(query, [email], callback);
     },
     findById: (id, callback) => {
         const query = 'SELECT * FROM users WHERE id = ?';

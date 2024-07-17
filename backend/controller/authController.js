@@ -5,10 +5,10 @@ const db = require('../config/db');
 require('dotenv').config();
 
 exports.register = (req, res) => {
-    const { username, password, role_id } = req.body;
+    const { name, email, password, role_id } = req.body;
 
-    if (!username || !password || !role_id) {
-        return res.status(400).send('Please provide username, password, and role_id');
+    if (!name || !email || !password || !role_id) {
+        return res.status(400).send('Please provide name, email, password, and role_id');
     }
 
     // Check if the role_id exists in the roles table
@@ -22,32 +22,44 @@ exports.register = (req, res) => {
             return res.status(400).send('Invalid role_id');
         }
 
-        // Hash the password and create the user
-        bcrypt.hash(password, 10, (err, hash) => {
+        // Check if the email already exists
+        user.findByEmail(email, (err, users) => {
             if (err) {
-                console.error('Error hashing password:', err);
-                return res.status(500).send('Error hashing password');
+                console.error('Error finding user by email:', err);
+                return res.status(500).send('Error finding user by email');
+            }
+            if (users.length > 0) {
+                return res.status(400).send('Email already exists');
             }
 
-            user.create(username, hash, role_id, (err, result) => {
+            // Hash the password and create the user
+            bcrypt.hash(password, 10, (err, hash) => {
                 if (err) {
-                    console.error('Error creating user:', err);
-                    return res.status(500).send('Error creating user');
+                    console.error('Error hashing password:', err);
+                    return res.status(500).send('Error hashing password');
                 }
-                res.status(201).send('User registered');
+
+                user.create(email, hash, name, role_id, (err, result) => {
+                    if (err) {
+                        console.error('Error creating user:', err);
+                        return res.status(500).send('Error creating user');
+                    }
+                    res.status(201).send('User registered');
+                });
             });
         });
+
     });
 };
 
 exports.login = (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).send('Please provide username and password');
+    if (!email || !password) {
+        return res.status(400).send('Please provide email and password');
     }
 
-    user.findByUsername(username, (err, users) => {
+    user.findByEmail(email, (err, users) => {
         if (err) {
             console.error('Error finding user:', err);
             return res.status(500).send('Error finding user');
