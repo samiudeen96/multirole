@@ -5,10 +5,14 @@ const db = require('../config/db');
 require('dotenv').config();
 
 exports.register = (req, res) => {
-    const { name, email, password, role_id } = req.body;
+    const { name, email, password, confirmPassword, role_id } = req.body;
 
-    if (!name || !email || !password || !role_id) {
-        return res.status(400).send('Please provide name, email, password, and role_id');
+    if (!name || !email || !password || !confirmPassword || !role_id) {
+        return res.status(400).send('Please provide name, email, password, confirmPassword, and role_id');
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
     }
 
     // Check if the role_id exists in the roles table
@@ -51,6 +55,7 @@ exports.register = (req, res) => {
 
     });
 };
+
 
 exports.login = (req, res) => {
     const { email, password } = req.body;
