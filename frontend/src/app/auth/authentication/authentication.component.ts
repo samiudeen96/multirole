@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-authentication',
@@ -9,34 +10,30 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class AuthenticationComponent implements OnInit {
   userLogin: FormGroup;
 
-  constructor(private fb: FormBuilder,) {
+  constructor(private fb: FormBuilder, private auth: AuthService) {
 
     this.userLogin = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
-      password: [null, [Validators.required, Validators.minLength(6)]]
+      password: [null, [Validators.required]]
     });
 
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  // loginContent = true
-  // registerContent = false
-  // login() {
-  //   this.loginContent = true
-  //   this.registerContent = false
-  // }
-
-  // register() {
-  //   this.registerContent = true
-  //   this.loginContent = false
-  // }
 
   currentPage: 'login' | 'register' = 'login'
 
   show(page: 'login' | 'register') {
     this.currentPage = page;
+  }
+
+  login() {
+    console.log(this.userLogin.value);
+    this.auth.login(this.userLogin.value).subscribe((res) => {
+      console.log(res);
+      
+    })
   }
 
 }

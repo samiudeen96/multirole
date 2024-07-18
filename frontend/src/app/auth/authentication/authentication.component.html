@@ -9,7 +9,7 @@
                 </div>
 
                 <div class="content mt-3" *ngIf="currentPage === 'login'">
-                    <form [formGroup]="userLogin" >
+                    <form [formGroup]="userLogin" (ngSubmit)="login()">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-envelope-at"></i></span>
                             <input type="email" class="form-control" placeholder="Email" formControlName="email" aria-label="Email"
