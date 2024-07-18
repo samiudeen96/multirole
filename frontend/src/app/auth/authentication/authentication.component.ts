@@ -13,8 +13,8 @@ export class AuthenticationComponent implements OnInit {
   constructor(private fb: FormBuilder, private auth: AuthService) {
 
     this.userLogin = this.fb.group({
-      email: [null, [Validators.required, Validators.email]],
-      password: [null, [Validators.required]]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
     });
 
   }
@@ -29,7 +29,7 @@ export class AuthenticationComponent implements OnInit {
   }
 
   login() {
-    console.log(this.userLogin.value);
+    // console.log(this.userLogin.value);
     this.auth.login(this.userLogin.value).subscribe((res) => {
       console.log(res);
       
