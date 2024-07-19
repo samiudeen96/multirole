@@ -8,11 +8,11 @@ exports.register = (req, res) => {
     const { name, email, password, confirmPassword, role_id } = req.body;
 
     if (!name || !email || !password || !confirmPassword || !role_id) {
-        return res.status(400).send('Please provide name, email, password, confirmPassword, and role_id');
+        return res.status(400).json({ message: 'Please provide name, email, password, confirmPassword, and role_id' });
     }
 
     if (password !== confirmPassword) {
-        return res.status(400).send('Passwords do not match');
+        return res.status(400).json({ message: 'Passwords do not match' });
     }
 
     // Check if the role_id exists in the roles table
@@ -20,41 +20,42 @@ exports.register = (req, res) => {
     db.query(query, [role_id], (err, roles) => {
         if (err) {
             console.error('Error finding role:', err);
-            return res.status(500).send('Error finding role');
+            return res.status(500).json({ message: 'Error finding role' });
         }
         if (roles.length === 0) {
-            return res.status(400).send('Invalid role_id');
+            return res.status(400).json({ message: 'Invalid role_id' });
         }
 
         // Check if the email already exists
         user.findByEmail(email, (err, users) => {
             if (err) {
                 console.error('Error finding user by email:', err);
-                return res.status(500).send('Error finding user by email');
+                return res.status(500).json({ message: 'Error finding user by email' });
             }
             if (users.length > 0) {
-                return res.status(400).send('Email already exists');
+                return res.status(400).json({ message: 'Email already exists' });
             }
 
             // Hash the password and create the user
             bcrypt.hash(password, 10, (err, hash) => {
                 if (err) {
                     console.error('Error hashing password:', err);
-                    return res.status(500).send('Error hashing password');
+                    return res.status(500).json({ message: 'Error hashing password' });
                 }
 
                 user.create(email, hash, name, role_id, (err, result) => {
                     if (err) {
                         console.error('Error creating user:', err);
-                        return res.status(500).send('Error creating user');
+                        return res.status(500).json({ message: 'Error creating user' });
                     }
-                    res.status(201).send('User registered');
+                    res.status(201).json({ message: 'User registered' });
                 });
             });
         });
-
     });
 };
+
+
 
 
 exports.login = (req, res) => {

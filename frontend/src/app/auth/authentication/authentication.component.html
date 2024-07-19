@@ -1,3 +1,4 @@
+{{userProfile | json }}
 <div class="container">
     <div class="row row_content">
         <div class="col-lg-3">
@@ -12,14 +13,14 @@
                     <form [formGroup]="userLogin" (ngSubmit)="login()">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-envelope-at"></i></span>
-                            <input type="email" class="form-control" placeholder="Email" formControlName="email" aria-label="Email"
-                                aria-describedby="basic-addon1">
+                            <input type="email" class="form-control" placeholder="Email" formControlName="email"
+                                aria-label="Email" aria-describedby="basic-addon1">
                         </div>
 
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-shield-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Password" formControlName="password" aria-label="Password"
-                                aria-describedby="basic-addon1">
+                            <input type="password" class="form-control" placeholder="Password"
+                                formControlName="password" aria-label="Password" aria-describedby="basic-addon1">
                         </div>
 
                         <div class="login_btn">
@@ -30,29 +31,38 @@
                 </div>
 
                 <div class="content mt-3" *ngIf="currentPage === 'register'">
-                    <form>
+                    <form [formGroup]="userRegister" (ngSubmit)="submit()">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-person"></i></span>
                             <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                aria-describedby="basic-addon1">
+                                aria-describedby="basic-addon1" formControlName="name">
                         </div>
 
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-envelope-at"></i></span>
                             <input type="email" class="form-control" placeholder="Email" aria-label="Email"
-                                aria-describedby="basic-addon1">
+                                aria-describedby="basic-addon1" formControlName="email">
                         </div>
 
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-shield-lock"></i></span>
                             <input type="password" class="form-control" placeholder="Password" aria-label="Password"
-                                aria-describedby="basic-addon1">
+                                aria-describedby="basic-addon1" formControlName="password">
                         </div>
 
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-shield-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Password"
-                                aria-describedby="basic-addon1">
+                            <input type="password" class="form-control" placeholder="Confirm Password"
+                                aria-label="Password" aria-describedby="basic-addon1" formControlName="confirmPassword">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <label class="input-group-text" for="inputGroupSelect01"><i
+                                    class="bi bi-person-exclamation"></i></label>
+                            <select class="form-select" id="inputGroupSelect01" formControlName="role_id">
+                                <option value="1">Admin</option>
+                                <option value="2">User</option>
+                            </select>
                         </div>
 
                         <div class="login_btn">
