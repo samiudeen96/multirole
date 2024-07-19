@@ -29,7 +29,7 @@ export class AuthenticationComponent implements OnInit {
   }
 
   login() {
-    console.log(this.userLogin.value);
+    // console.log(this.userLogin.value);
     this.auth.login(this.userLogin.value).subscribe((res) => {
       console.log(res);
       
