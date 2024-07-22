@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth/auth.service';
+import { Router } from '@angular/router';
+import { StorageService } from '../services/auth/storage.service';
 
 @Component({
   selector: 'app-authentication',
@@ -14,7 +16,13 @@ export class AuthenticationComponent implements OnInit {
   token: any;
   userProfile: any;
 
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private storage: StorageService
+
+  ) {
 
     // login
     this.userLogin = this.fb.group({
@@ -28,7 +36,7 @@ export class AuthenticationComponent implements OnInit {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
       confirmPassword: ['', [Validators.required, this.confirmValidation.bind(this)]],
-      role_id: [ , [Validators.required]]
+      role_id: [, [Validators.required]]
     })
 
   }
@@ -57,15 +65,27 @@ export class AuthenticationComponent implements OnInit {
     // console.log(this.userLogin.value);
     this.auth.login(this.userLogin.value).subscribe((res) => {
       this.token = res.token;
-      console.log(res.token);
+      console.log(this.token);
       this.profile();
+
     });
+    this.userLogin.reset();
   }
 
   profile() {
     this.auth.getProfile(this.token).subscribe((res) => {
       this.userProfile = res
       console.log("Profile: " + JSON.stringify(this.userProfile));
+
+      if (this.userProfile != null) {
+        const user = {
+          id: this.userProfile.id,
+          roleId: this.userProfile.role_id
+        }
+        this.storage.saveUser(user);
+        this.storage.saveToken(this.token)
+      }
+
     });
   }
 
@@ -73,6 +93,9 @@ export class AuthenticationComponent implements OnInit {
     this.auth.signup(this.userRegister.value).subscribe((res) => {
       console.log(res);
     })
+    this.userRegister.reset();
+    // this.router.navigateByUrl("/login")
+    this.currentPage = 'login'
   }
 
 }
