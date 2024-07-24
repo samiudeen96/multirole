@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/auth/storage.service';
+import { User } from '../models/user.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-authentication',
@@ -14,13 +16,14 @@ export class AuthenticationComponent implements OnInit {
   userRegister: FormGroup;
 
   token: any;
-  userProfile: any;
+  userProfile: User | null = null;
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private storage: StorageService
+    private storage: StorageService,
+    private toastr: ToastrService
 
   ) {
 
@@ -62,12 +65,10 @@ export class AuthenticationComponent implements OnInit {
 
 
   login() {
-    // console.log(this.userLogin.value);
     this.auth.login(this.userLogin.value).subscribe((res) => {
       this.token = res.token;
       console.log(this.token);
       this.profile();
-
     });
     this.userLogin.reset();
   }
@@ -78,12 +79,24 @@ export class AuthenticationComponent implements OnInit {
       console.log("Profile: " + JSON.stringify(this.userProfile));
 
       if (this.userProfile != null) {
-        const user = {
+        const user: User = {
           id: this.userProfile.id,
-          roleId: this.userProfile.role_id
+          role_id: this.userProfile.role_id,
+          name: this.userProfile.name,
         }
         this.storage.saveUser(user);
-        this.storage.saveToken(this.token)
+        this.storage.saveToken(this.token);
+
+        if(this.storage.isAdminLoggedIn()){
+          this.router.navigateByUrl("/admin/dashboard");
+          this.toastr.success(`Hello! ${this.userProfile.name}`);
+        }else if(this.storage.isCustomerLoggedIn()){
+          this.router.navigateByUrl("/customer/dashboard");
+          this.toastr.success(`Hello! ${this.userProfile.name}`);
+        }else{
+          console.log("Bad credential");
+          
+        }
       }
 
     });
@@ -94,8 +107,8 @@ export class AuthenticationComponent implements OnInit {
       console.log(res);
     })
     this.userRegister.reset();
-    // this.router.navigateByUrl("/login")
     this.currentPage = 'login'
   }
+
 
 }
